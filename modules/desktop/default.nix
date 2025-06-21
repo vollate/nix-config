@@ -18,7 +18,7 @@
     firefox
     chromium
     thunderbird
-    vlc
+    mpv
     gimp
     libreoffice
     telegram-desktop

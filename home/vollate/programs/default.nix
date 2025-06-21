@@ -5,5 +5,6 @@
     ./neovim.nix
     ./firefox.nix
     ./vscode.nix
+    ./gpg.nix
   ];
 } 

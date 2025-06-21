@@ -24,5 +24,6 @@
     tree
     unzip
     zip
+    gnupg
   ];
 } 

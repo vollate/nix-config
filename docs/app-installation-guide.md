@@ -254,6 +254,64 @@ home.packages = with pkgs; [
 
 #### Neovim 配置示例
 
+对于 Neovim，有两种主要的配置方式：
+
+**方式1: 使用 Home Manager 管理 ~/.config/nvim 目录（推荐）**
+
+```nix
+# home/vollate/programs/neovim.nix
+{ config, lib, pkgs, ... }:
+
+{
+  # 只安装 neovim 和基础工具
+  home.packages = with pkgs; [
+    neovim
+    
+    # 基础工具
+    ripgrep # telescope/搜索需要
+    fd # 文件查找需要
+  ];
+
+  # 管理 nvim 配置文件
+  xdg.configFile = {
+    "nvim" = {
+      source = ./nvim-config;
+      recursive = true;
+    };
+  };
+  
+  # 设置为默认编辑器
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
+  
+  # 注意: 如果使用 coc-nvim，Node.js 通过开发环境模块安装
+  # LSP servers 可以通过 coc 扩展自动管理
+}
+```
+
+然后在 `home/vollate/programs/nvim-config/` 目录下放置您的 Neovim 配置：
+
+```
+home/vollate/programs/nvim-config/
+├── init.lua                 # 主配置文件
+├── lua/
+│   ├── config/
+│   │   ├── options.lua      # 基础选项
+│   │   ├── keymaps.lua      # 快捷键
+│   │   └── autocmds.lua     # 自动命令
+│   └── plugins/
+│       ├── init.lua         # 插件管理器
+│       ├── lsp.lua          # LSP 配置
+│       ├── treesitter.lua   # 语法高亮
+│       └── telescope.lua    # 模糊搜索
+└── after/
+    └── plugin/
+```
+
+**方式2: 使用 Home Manager 的 programs.neovim（简单配置）**
+
 ```nix
 # home/vollate/programs/neovim.nix
 { config, lib, pkgs, ... }:
@@ -265,58 +323,35 @@ home.packages = with pkgs; [
     viAlias = true;
     vimAlias = true;
     
+    # 仅用于简单配置，复杂配置建议使用方式1
     extraConfig = ''
-      " 基础设置
-      set number
-      set relativenumber
-      set expandtab
-      set tabstop=2
-      set shiftwidth=2
-      set smartindent
-      set wrap
-      set ignorecase
-      set smartcase
-      set incsearch
-      set hlsearch
-      
-      " 启用鼠标
-      set mouse=a
-      
-      " 启用剪贴板
-      set clipboard=unnamedplus
+      lua << EOF
+      -- 基础设置
+      vim.opt.number = true
+      vim.opt.relativenumber = true
+      vim.opt.expandtab = true
+      vim.opt.tabstop = 2
+      vim.opt.shiftwidth = 2
+      vim.opt.smartindent = true
+      EOF
     '';
     
+    # 仅安装必要插件，复杂配置用 Lazy.nvim 等插件管理器
     plugins = with pkgs.vimPlugins; [
-      # 外观
-      tokyonight-nvim
-      nvim-web-devicons
-      lualine-nvim
-      
-      # 文件管理
-      nvim-tree-lua
-      telescope-nvim
-      
-      # LSP 和补全
-      nvim-lspconfig
-      nvim-cmp
-      cmp-nvim-lsp
-      cmp-buffer
-      cmp-path
-      
-      # 语法高亮
+      # 基础插件
       nvim-treesitter.withAllGrammars
-      
-      # Git 集成
-      gitsigns-nvim
-      
-      # 实用插件
-      comment-nvim
-      auto-pairs
-      which-key-nvim
+      telescope-nvim
+      nvim-lspconfig
     ];
   };
 }
 ```
+
+**推荐使用方式1**，因为：
+- 符合 Neovim 社区的常见做法
+- 可以直接使用现有的 Neovim 配置
+- 支持复杂的插件管理器（如 Lazy.nvim, Packer）
+- 更容易与他人分享配置
 
 然后在 `home/vollate/programs/default.nix` 中导入：
 
@@ -383,6 +418,43 @@ environment.systemPackages = with pkgs; [
   pgadmin4
   mongodb-compass
 ];
+```
+
+### 示例5: 安装 GnuPG (加密工具)
+
+```nix
+# 系统级安装 - modules/base/default.nix
+environment.systemPackages = with pkgs; [
+  # ... 现有包 ...
+  gnupg
+];
+
+# GPG Agent 配置 - modules/base/security.nix
+programs.gnupg.agent = {
+  enable = true;
+  enableSSHSupport = true;
+  pinentryPackage = pkgs.pinentry-curses;
+};
+
+# 用户级配置 - home/vollate/programs/gpg.nix
+programs.gpg = {
+  enable = true;
+  settings = {
+    # 现代安全设置
+    personal-cipher-preferences = "AES256 AES192 AES";
+    personal-digest-preferences = "SHA512 SHA384 SHA256";
+    cert-digest-algo = "SHA512";
+    # ... 更多配置 ...
+  };
+};
+
+services.gpg-agent = {
+  enable = true;
+  enableSshSupport = true;
+  enableZshIntegration = true;
+  defaultCacheTtl = 1800;
+  maxCacheTtl = 7200;
+};
 ```
 
 ## 🔄 应用生效方法

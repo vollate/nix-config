@@ -1,60 +1,40 @@
 { config, lib, pkgs, ... }:
 
 {
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
+  # 安装 neovim 和相关工具
+  home.packages = with pkgs; [
+    # 使用带 Node.js 的 Neovim (通过 overlay 提供)
+    # 这确保了即使没有开发环境模块，coc-nvim 也能正常工作
+    neovim-with-nodejs
     
-    extraConfig = ''
-      " Basic settings
-      set number
-      set relativenumber
-      set expandtab
-      set tabstop=2
-      set shiftwidth=2
-      set smartindent
-      set wrap
-      set ignorecase
-      set smartcase
-      set incsearch
-      set hlsearch
-      
-      " Enable mouse
-      set mouse=a
-      
-      " Enable clipboard
-      set clipboard=unnamedplus
-    '';
+    # 基础工具
+    ripgrep # telescope/搜索需要
+    fd # 文件查找需要
     
-    plugins = with pkgs.vimPlugins; [
-      # Appearance
-      tokyonight-nvim
-      nvim-web-devicons
-      lualine-nvim
-      
-      # File management
-      nvim-tree-lua
-      telescope-nvim
-      
-      # LSP and completion
-      nvim-lspconfig
-      nvim-cmp
-      cmp-nvim-lsp
-      cmp-buffer
-      cmp-path
-      
-      # Syntax highlighting
-      nvim-treesitter.withAllGrammars
-      
-      # Git integration
-      gitsigns-nvim
-      
-      # Useful plugins
-      comment-nvim
-      auto-pairs
-      which-key-nvim
-    ];
+    # 可选的格式化工具 (可以通过 coc 扩展管理)
+    # stylua
+    # nixfmt
+    # black
+    # prettier
+  ];
+
+  # 管理 ~/.config/nvim 目录
+  xdg.configFile = {
+    "nvim" = {
+      source = ./nvim-config;
+      recursive = true;
+    };
+  };
+  
+  # 设置环境变量
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
+  
+  # 添加 shell 别名
+  home.shellAliases = {
+    vi = "nvim";
+    vim = "nvim";
   };
 } 

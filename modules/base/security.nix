@@ -22,6 +22,13 @@
     lightdm.enableGnomeKeyring = true;
   };
 
+  # GnuPG configuration
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+    pinentryPackage = pkgs.pinentry-curses;
+  };
+
   # AppArmor (optional, can be enabled for additional security)
   # security.apparmor.enable = true;
 } 

@@ -44,6 +44,9 @@
   let
     # Import our custom library
     myLib = import ./lib { inherit (nixpkgs) lib; inherit inputs; };
+    
+    # Import overlays
+    overlays = import ./overlays;
   in
   {
     # NixOS configurations
@@ -54,6 +57,7 @@
         username = "vollate";
         desktop = "plasma";
         system = "x86_64-linux";
+        overlays = overlays; # 应用 overlays
       };
       
       # Add more hosts here as needed

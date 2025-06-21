@@ -12,6 +12,7 @@ rec {
     modules ? [],
     extraModules ? [],
     desktop ? null,
+    overlays ? [],
   }: inputs.nixpkgs.lib.nixosSystem {
     inherit system;
     
@@ -22,6 +23,11 @@ rec {
     modules = modules ++ extraModules ++ [
       ../hosts/${hostname}
       ../users/${username}.nix
+      
+      # Apply overlays
+      {
+        nixpkgs.overlays = overlays;
+      }
       
       # Home Manager integration
       inputs.home-manager.nixosModules.home-manager
