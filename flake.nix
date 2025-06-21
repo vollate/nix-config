@@ -23,7 +23,6 @@
     ];
     # 网络超时设置
     connect-timeout = 10;
-    download-timeout = 60;
   };
 
   inputs = {
@@ -36,6 +35,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # VSCode Server support for NixOS
+    vscode-server = {
+      url = "github:nix-community/nixos-vscode-server";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Add more inputs as needed
     # catppuccin.url = "github:catppuccin/nix";
   };
@@ -44,6 +49,7 @@
     self,
     nixpkgs,
     home-manager,
+    vscode-server,
     ...
   }: 
   let

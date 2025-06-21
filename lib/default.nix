@@ -35,6 +35,7 @@ rec {
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
+          backupFileExtension = "backup";  # 自动备份冲突文件
           extraSpecialArgs = { inherit inputs hostname username desktop; };
           users.${username} = import ../home/${username};
         };
@@ -48,6 +49,8 @@ rec {
       ../modules/base
       ../modules/desktop
       ../modules/development
+      # Add VSCode Server support
+      inputs.vscode-server.nixosModules.default
     ] ++ (args.modules or []);
   });
 } 

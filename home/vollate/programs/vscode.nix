@@ -87,24 +87,5 @@
     };
   };
 
-  # 创建 VSCode Server 启动脚本
-  home.file.".vscode-server/start.sh" = {
-    text = ''
-      #!/bin/bash
-      # VSCode Server 启动脚本
-      # 确保 VSCode Server 能在 NixOS 上正常运行
-      
-      export PATH="${pkgs.nodejs}/bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:$PATH"
-      export VSCODE_SERVER_NODE_PATH="${pkgs.nodejs}/bin/node"
-      
-      # 启动 VSCode Server
-      exec "$@"
-    '';
-    executable = true;
-  };
-
-  # 设置环境变量
-  home.sessionVariables = {
-    VSCODE_SERVER_NODE_PATH = "${pkgs.nodejs}/bin/node";
-  };
+  # VSCode Server 通过 nixos-vscode-server 模块自动处理
 } 

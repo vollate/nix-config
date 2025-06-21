@@ -16,15 +16,12 @@
   # Common desktop packages
   environment.systemPackages = with pkgs; [
     firefox
-    chromium
     thunderbird
     mpv
     gimp
     libreoffice
     telegram-desktop
-    discord
     vscode
-    obsidian
   ];
 
   # Enable dconf (required for many desktop applications)

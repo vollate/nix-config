@@ -37,7 +37,7 @@
     
     # Podman tools
     podman-compose
-    podman-desktop
+    #podman-desktop
   ];
 
   # Enable SPICE USB redirection

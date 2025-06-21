@@ -118,6 +118,14 @@
       kdePackages.kate
     #  thunderbird
     ];
+    # Enable SSH key authentication for this user
+    # You'll need to add your SSH public key to ~/.ssh/authorized_keys
+    # or configure it through other means after system setup
+    openssh.authorizedKeys.keys = [
+      # Add your SSH public keys here, for example:
+      # "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC... your-email@example.com"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG0+ARV51tOmWpQ9ZFCelPPV4nx7Sbf8e9EQra1gbZDx lambillda@TBLD24"
+    ];
   };
 
   nix.settings = {
@@ -145,13 +153,15 @@
     # 使用代理缓存
     builders-use-substitutes = true;
     
-    # 网络超时设置
+    # 网络超时设置（使用有效的选项）
     connect-timeout = 10;
-    download-timeout = 60;
   };
 
   # Install firefox.
   programs.firefox.enable = true;
+
+  # Enable VSCode Server support for NixOS
+  services.vscode-server.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -176,14 +186,29 @@
 
   # List services that you want to enable:
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  # Enable the OpenSSH daemon for VSCode Remote and other SSH connections.
+  services.openssh = {
+    enable = true;
+    settings = {
+      # Disable root login for security
+      PermitRootLogin = "no";
+      # Only allow key-based authentication (more secure)
+      PasswordAuthentication = false;
+      # Allow X11 forwarding for GUI applications
+      X11Forwarding = true;
+    };
+    # Only allow users in wheel group to SSH
+    allowSFTP = true;
+  };
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  networking.firewall = {
+    enable = true;
+    # Allow SSH (port 22) for VSCode Remote and other SSH connections
+    allowedTCPPorts = [ 22 ];
+    # Optionally allow other ports as needed
+    # allowedUDPPorts = [ ... ];
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

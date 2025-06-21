@@ -5,9 +5,9 @@
     hostName = hostname;
     networkmanager.enable = true;
     
-    # Disable firewall by default (can be overridden in host config)
+    # Enable firewall by default for security (can be overridden in host config)
     firewall = {
-      enable = lib.mkDefault false;
+      enable = lib.mkDefault true;
     };
   };
 
