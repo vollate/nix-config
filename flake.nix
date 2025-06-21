@@ -78,14 +78,14 @@
         default = pkgs.mkShell {
           buildInputs = with pkgs; [
             nil  # Nix language server
-            nixfmt
+            nixfmt-classic
             git
           ];
           shellHook = ''
             echo "Welcome to NixOS configuration development environment!"
             echo "Available commands:"
-            echo "  nil      - Nix language server"
-            echo "  nixfmt   - Nix formatter"
+            echo "  nil          - Nix language server"
+            echo "  nixfmt-classic - Nix formatter"
           '';
         };
       }
@@ -93,7 +93,7 @@
 
     # Formatter for nix fmt
     formatter = nixpkgs.lib.genAttrs [ "x86_64-linux" ] (system:
-      nixpkgs.legacyPackages.${system}.nixfmt
+      nixpkgs.legacyPackages.${system}.nixfmt-classic
     );
   };
 }

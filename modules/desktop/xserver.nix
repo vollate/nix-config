@@ -10,17 +10,17 @@
       layout = "us";
       variant = "";
     };
-    
-    # Enable touchpad support (enabled default in most desktopManager)
-    libinput.enable = true;
   };
+
+  # Enable touchpad support (moved from xserver.libinput)
+  services.libinput.enable = true;
 
   # Enable CUPS to print documents
   services.printing.enable = true;
   
-  # Hardware acceleration
-  hardware.opengl = {
+  # Hardware acceleration (updated to hardware.graphics)
+  hardware.graphics = {
     enable = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
   };
 } 

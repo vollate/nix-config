@@ -46,8 +46,8 @@
     maxCacheTtl = 7200;            # 2 小时
     maxCacheTtlSsh = 7200;         # 2 小时
     
-    # Pin entry 程序
-    pinentryPackage = pkgs.pinentry-curses;
+    # Pin entry 程序 (新格式)
+    pinentry.package = pkgs.pinentry-curses;
   };
   
   # Shell 环境变量

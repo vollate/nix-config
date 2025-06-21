@@ -39,7 +39,7 @@
     
     # Nix
     nil # Nix language server
-    nixfmt
+    nixfmt-classic
     nixpkgs-fmt
     
     # Web development

@@ -17,10 +17,10 @@
   boot.kernelModules = [ "acpi_call" ];
   boot.extraModulePackages = with config.boot.kernelPackages; [ acpi_call ];
   
-  # Graphics configuration (adjust for your hardware)
-  hardware.opengl = {
+  # Graphics configuration (updated to hardware.graphics)
+  hardware.graphics = {
     enable = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
     
     # For AMD graphics - basic support
     extraPackages = with pkgs; [
