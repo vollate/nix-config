@@ -125,20 +125,29 @@
     experimental-features = ["nix-command" "flakes"];
 
     substituters = [
-      # cache mirror located in China
-      # status: https://mirror.sjtu.edu.cn/
-      # "https://mirror.sjtu.edu.cn/nix-channels/store"
-      # status: https://mirrors.ustc.edu.cn/status/
+      # 中国科学技术大学镜像 - 主要使用
       "https://mirrors.ustc.edu.cn/nix-channels/store"
-
-      # fallback
+      
+      # 上海交通大学镜像 - 备用
+      "https://mirror.sjtu.edu.cn/nix-channels/store"
+      
+      # 清华大学镜像 - 备用  
+      "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
+      
+      # 官方缓存 - 最后备用
       "https://cache.nixos.org"
     ];
 
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
     ];
+    
+    # 使用代理缓存
     builders-use-substitutes = true;
+    
+    # 网络超时设置
+    connect-timeout = 10;
+    download-timeout = 60;
   };
 
   # Install firefox.
