@@ -23,7 +23,7 @@
       # 实用工具
       eamodio.gitlens
       esbenp.prettier-vscode
-      ms-vscode.hexdump
+      # ms-vscode.hexdump  # 该扩展在 nixpkgs 中不可用
       formulahendry.auto-rename-tag
       
       # 远程开发
