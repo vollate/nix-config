@@ -18,7 +18,7 @@
       # CLI tools
       ripgrep
       fd
-      exa
+      eza
       bat
       fzf
       zoxide

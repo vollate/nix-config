@@ -13,9 +13,9 @@
     };
     
     shellAliases = {
-      ll = "exa -l";
-      la = "exa -la";
-      ls = "exa";
+      ll = "eza -l";
+      la = "eza -la";
+      ls = "eza";
       cat = "bat";
       grep = "rg";
       find = "fd";
@@ -47,7 +47,7 @@
       ];
     };
     
-    initExtra = ''
+    initContent = ''
       # Zoxide integration
       eval "$(zoxide init zsh)"
       

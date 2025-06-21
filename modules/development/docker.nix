@@ -1,30 +1,23 @@
 { config, lib, pkgs, ... }:
 
 {
-  # Enable Docker
-  virtualisation.docker = {
+  # Enable Podman
+  virtualisation.podman = {
     enable = true;
-    enableOnBoot = true;
     
-    # Use Docker Compose v2
-    daemon.settings = {
-      features = {
-        buildkit = true;
-      };
+    # Docker compatibility
+    dockerCompat = true;
+    
+    # Default network
+    defaultNetwork.settings = {
+      dns_enabled = true;
     };
   };
 
-  # Docker-related packages
+  # Podman-related packages
   environment.systemPackages = with pkgs; [
-    docker-compose
-    docker-buildx
-    dive # Docker image analyzer
-    lazydocker # Terminal UI for Docker
+    podman-compose
+    dive # Container image analyzer
+    lazydocker # Terminal UI for containers
   ];
-
-  # Enable Docker rootless mode (optional)
-  # virtualisation.docker.rootless = {
-  #   enable = true;
-  #   setSocketVariable = true;
-  # };
 } 

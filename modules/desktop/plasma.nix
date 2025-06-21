@@ -12,8 +12,7 @@
     kdePackages.konsole
     kdePackages.spectacle
     kdePackages.ark
-    kdePackages.kwrite
-    kdePackages.kcharselect
+    kdePackages.yakuake
     kdePackages.kcolorchooser
     kdePackages.kruler
     kdePackages.okular

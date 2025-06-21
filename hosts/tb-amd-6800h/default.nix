@@ -18,6 +18,9 @@
   # Host-specific settings
   networking.hostName = hostname;
   
+  # 设置图形供应商为 AMD
+  nixosVollate.graphicsVendor = "amd";
+  
   # Enable specific features for this host
   # Uncomment as needed:
   # hardware.nvidia.enable = true;  # For NVIDIA graphics

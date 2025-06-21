@@ -8,23 +8,23 @@ final: prev: {
     paths = with prev; [
       neovim
       nodejs
-      npm
+      nodePackages.pnpm
     ];
     
     # 设置环境变量确保 coc-nvim 能找到 Node.js
     buildInputs = with prev; [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/nvim \
-        --prefix PATH : ${prev.lib.makeBinPath [ prev.nodejs prev.npm ]}
+        --prefix PATH : ${prev.lib.makeBinPath [ prev.nodejs prev.nodePackages.pnpm ]}
     '';
     
     meta = prev.neovim.meta // {
-      description = "Neovim with Node.js for coc-nvim support";
+      description = "Neovim with Node.js and pnpm for coc-nvim support";
     };
   };
   
   # 也可以直接覆盖 neovim 包
   # neovim = prev.neovim.overrideAttrs (oldAttrs: {
-  #   buildInputs = (oldAttrs.buildInputs or []) ++ [ prev.nodejs prev.npm ];
+  #   buildInputs = (oldAttrs.buildInputs or []) ++ [ prev.nodejs prev.nodePackages.pnpm ];
   # });
 } 

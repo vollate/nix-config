@@ -19,12 +19,13 @@
   ];
 
   # 管理 ~/.config/nvim 目录
-  xdg.configFile = {
-    "nvim" = {
-      source = ./nvim-config;
-      recursive = true;
-    };
-  };
+  # 暂时注释掉配置文件复制，避免路径问题
+  # xdg.configFile = {
+  #   "nvim" = {
+  #     source = ./nvim-config;
+  #     recursive = true;
+  #   };
+  # };
   
   # 设置环境变量
   home.sessionVariables = {

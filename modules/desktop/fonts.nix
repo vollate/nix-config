@@ -14,7 +14,9 @@
       source-han-serif
       
       # Programming fonts
-      (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" "Iosevka" ]; })
+      nerd-fonts.fira-code
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.iosevka
       jetbrains-mono
       fira-code
       fira-code-symbols

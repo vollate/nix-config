@@ -20,14 +20,11 @@
   # Graphics configuration (adjust for your hardware)
   hardware.opengl = {
     enable = true;
-    driSupport = true;
     driSupport32Bit = true;
     
-    # For AMD graphics
+    # For AMD graphics - basic support
     extraPackages = with pkgs; [
       amdvlk
-      rocm-opencl-icd
-      rocm-opencl-runtime
     ];
     
     # For 32-bit support
@@ -49,7 +46,4 @@
       };
     };
   };
-  
-  # Sound
-  sound.enable = false; # Using PipeWire instead
 } 

@@ -21,6 +21,6 @@
   # Security configuration
   security.sudo = {
     enable = true;
-    wheelNeedsPassword = true;
+    wheelNeedsPassword = false;
   };
 } 
