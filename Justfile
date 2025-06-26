@@ -14,7 +14,7 @@ debug host="tb-amd-6800h":
 
 # Update and deploy the configuration  
 update host="tb-amd-6800h":
-    nix flake update
+    nix flake update --accept-flake-config 
     sudo nixos-rebuild switch --flake .#{{host}} --accept-flake-config  
 
 # Build configuration without deploying
