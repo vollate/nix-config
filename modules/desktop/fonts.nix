@@ -8,11 +8,11 @@
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
       noto-fonts-emoji
-      
+
       # English fonts
       source-han-sans
       source-han-serif
-      
+
       # Programming fonts
       nerd-fonts.fira-code
       nerd-fonts.jetbrains-mono
@@ -20,7 +20,7 @@
       jetbrains-mono
       fira-code
       fira-code-symbols
-      
+
       # Other useful fonts
       liberation_ttf
       dejavu_fonts
@@ -37,4 +37,4 @@
       };
     };
   };
-} 
+}

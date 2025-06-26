@@ -5,7 +5,7 @@
   security = {
     rtkit.enable = true;
     polkit.enable = true;
-    
+
     # Allow users in wheel group to use sudo without password for system management
     sudo.extraRules = [{
       users = [ "wheel" ];
@@ -31,4 +31,4 @@
 
   # AppArmor (optional, can be enabled for additional security)
   # security.apparmor.enable = true;
-} 
+}

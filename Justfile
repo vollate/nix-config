@@ -7,12 +7,15 @@ default:
 
 # Deploy the configuration to the current host
 deploy host="tb-amd-6800h":
-    sudo nixos-rebuild switch --flake .#{{host}}
+    sudo nixos-rebuild switch --flake .#{{host}} --accept-flake-config
+
+debug host="tb-amd-6800h":
+    sudo nixos-rebuild switch --flake .#{{host}} --accept-flake-config --show-trace
 
 # Update and deploy the configuration  
 update host="tb-amd-6800h":
     nix flake update
-    sudo nixos-rebuild switch --flake .#{{host}}
+    sudo nixos-rebuild switch --flake .#{{host}} --accept-flake-config  
 
 # Build configuration without deploying
 build host="tb-amd-6800h":
@@ -30,7 +33,7 @@ clean:
 
 # Format all Nix files
 fmt:
-    nix fmt
+    nix fmt --accept-flake-config  
 
 # Enter development shell
 dev:

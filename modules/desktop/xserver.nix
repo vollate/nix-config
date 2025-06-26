@@ -4,7 +4,7 @@
   # Enable the X11 windowing system
   services.xserver = {
     enable = true;
-    
+
     # Configure keymap
     xkb = {
       layout = "us";
@@ -17,10 +17,10 @@
 
   # Enable CUPS to print documents
   services.printing.enable = true;
-  
+
   # Hardware acceleration (updated to hardware.graphics)
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
-} 
+}

@@ -9,16 +9,13 @@
     };
     systemd-boot = {
       enable = true;
-      configurationLimit = 10; # Keep only 10 generations
+      configurationLimit = 20;
     };
   };
 
   # Kernel parameters
-  boot.kernelParams = [
-    "quiet"
-    "splash"
-  ];
+  boot.kernelParams = [ "quiet" "splash" ];
 
   # Enable tmpfs for /tmp
   boot.tmp.useTmpfs = true;
-} 
+}

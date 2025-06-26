@@ -1,9 +1,5 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [
-    ./zsh.nix
-    ./git.nix
-    ./starship.nix
-  ];
-} 
+  imports = [ ./zsh.nix ./git.nix ./starship.nix ];
+}

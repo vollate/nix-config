@@ -11,10 +11,10 @@
         runAsRoot = false;
       };
     };
-    
+
     # Enable VirtualBox (optional, uncomment if needed)
     # virtualbox.host.enable = true;
-    
+
     # Enable Podman as Docker alternative
     podman = {
       enable = true;
@@ -34,7 +34,7 @@
     win-spice
     qemu
     OVMF
-    
+
     # Podman tools
     podman-compose
     #podman-desktop
@@ -42,4 +42,4 @@
 
   # Enable SPICE USB redirection
   services.spice-vdagentd.enable = true;
-} 
+}

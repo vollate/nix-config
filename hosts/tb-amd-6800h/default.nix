@@ -9,7 +9,7 @@
   imports = [
     # Include the results of the hardware scan
     ./hardware-configuration.nix
-    
+
     # Host-specific modules
     ./networking.nix
     ./hardware.nix
@@ -17,20 +17,21 @@
 
   # Host-specific settings
   networking.hostName = hostname;
-  
+
   # 设置图形供应商为 AMD
   nixosVollate.graphicsVendor = "amd";
-  
+
   # Enable specific features for this host
   # Uncomment as needed:
   # hardware.nvidia.enable = true;  # For NVIDIA graphics
   # services.xrdp.enable = true;    # For remote desktop
   # virtualisation.docker.enable = true;  # Already enabled in development module
-  
+
   # Host-specific packages
-  environment.systemPackages = with pkgs; [
-    # Add host-specific packages here
-  ];
+  environment.systemPackages = with pkgs;
+    [
+      # Add host-specific packages here
+    ];
 
   # Override any module defaults here
   # For example:
@@ -114,10 +115,11 @@
     isNormalUser = true;
     description = username;
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      kdePackages.kate
-    #  thunderbird
-    ];
+    packages = with pkgs;
+      [
+        kdePackages.kate
+        #  thunderbird
+      ];
     # Enable SSH key authentication for this user
     # You'll need to add your SSH public key to ~/.ssh/authorized_keys
     # or configure it through other means after system setup
@@ -130,29 +132,28 @@
 
   nix.settings = {
     # enable flakes globally
-    experimental-features = ["nix-command" "flakes"];
+    experimental-features = [ "nix-command" "flakes" ];
 
     substituters = [
       # 中国科学技术大学镜像 - 主要使用
       "https://mirrors.ustc.edu.cn/nix-channels/store"
-      
+
       # 上海交通大学镜像 - 备用
       "https://mirror.sjtu.edu.cn/nix-channels/store"
-      
+
       # 清华大学镜像 - 备用  
       "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
-      
+
       # 官方缓存 - 最后备用
       "https://cache.nixos.org"
     ];
 
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-    ];
-    
+    trusted-public-keys =
+      [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
+
     # 使用代理缓存
     builders-use-substitutes = true;
-    
+
     # 网络超时设置（使用有效的选项）
     connect-timeout = 10;
   };
@@ -160,8 +161,11 @@
   # Install firefox.
   programs.firefox.enable = true;
 
-  # Enable VSCode Server support for NixOS
-  services.vscode-server.enable = true;
+  # Enable nix-ld for FHS compatibility (fixes VSCode Server and other dynamic binaries)
+  programs.nix-ld = {
+    enable = true;
+    package = pkgs.nix-ld-rs; # Use nix-ld-rs for NixOS 24.05+
+  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -192,22 +196,31 @@
     settings = {
       # Disable root login for security
       PermitRootLogin = "no";
-      # Only allow key-based authentication (more secure)
-      PasswordAuthentication = false;
+      # Allow password authentication for initial setup (can be disabled later)
+      PasswordAuthentication = true;
       # Allow X11 forwarding for GUI applications
       X11Forwarding = true;
+      # VSCode Remote specific settings
+      AcceptEnv = "LANG LC_*";
+      # Allow longer connection times
+      ClientAliveInterval = 60;
+      ClientAliveCountMax = 10;
     };
-    # Only allow users in wheel group to SSH
+    # Enable SFTP
     allowSFTP = true;
   };
 
   # Open ports in the firewall.
   networking.firewall = {
     enable = true;
-    # Allow SSH (port 22) for VSCode Remote and other SSH connections
-    allowedTCPPorts = [ 22 ];
-    # Optionally allow other ports as needed
-    # allowedUDPPorts = [ ... ];
+    # Allow common ports
+    allowedTCPPorts = [
+      22 # SSH for VSCode Remote
+      80 # HTTP
+      443 # HTTPS
+      # 8080  # Development server (uncomment if needed)
+    ];
+    allowedUDPPorts = [ ];
   };
 
   # This value determines the NixOS release from which the default
@@ -218,9 +231,8 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
 
-
   # do not need to keep too much generations
-  boot.loader.systemd-boot.configurationLimit = 10;
+  boot.loader.systemd-boot.configurationLimit = lib.mkForce 10;
   # boot.loader.grub.configurationLimit = 10;
 
   # do garbage collection weekly to keep disk usage low

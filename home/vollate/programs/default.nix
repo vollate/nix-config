@@ -1,10 +1,5 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [
-    ./neovim.nix
-    ./firefox.nix
-    ./vscode.nix
-    ./gpg.nix
-  ];
-} 
+  imports = [ ./neovim.nix ./firefox.nix ./vscode.nix ./gpg.nix ];
+}

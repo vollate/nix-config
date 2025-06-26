@@ -7,55 +7,57 @@
     python3
     python3Packages.pip
     python3Packages.virtualenv
-    
+
     # Node.js
     nodejs
     nodePackages.pnpm
-    
+
     # Rust
     rustc
     cargo
     rustfmt
     clippy
-    
+    cargo-cache
+
     # Go
     go
-    
+
     # C/C++
     gcc
     clang
     gdb
     lldb
-    
+    clang-tools
+
     # Java
-    jdk17
+    jdk21
     maven
     gradle
-    
+
     # Haskell
-    ghc
-    cabal-install
-    stack
-    
+    # ghc
+    # cabal-install
+    # stack
+
     # Nix
     nil # Nix language server
     nixfmt-classic
     nixpkgs-fmt
-    
+
     # Web development
     deno
     bun
-    
+
     # Database tools
     sqlite
     postgresql
     mysql80
-    
+
     # Container tools
     podman
     buildah
     skopeo
-    
+
     # VSCode Server dependencies
     wget
     unzip
@@ -76,13 +78,11 @@
       enable = lib.mkDefault false;
       package = pkgs.postgresql_15;
     };
-    
+
     # MySQL
     mysql = {
       enable = lib.mkDefault false;
       package = pkgs.mysql80;
     };
   };
-
-  # VSCode Server 不需要手动配置，使用社区解决方案
-} 
+}

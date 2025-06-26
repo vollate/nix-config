@@ -4,14 +4,12 @@
   # Enable Podman
   virtualisation.podman = {
     enable = true;
-    
+
     # Docker compatibility
     dockerCompat = true;
-    
+
     # Default network
-    defaultNetwork.settings = {
-      dns_enabled = true;
-    };
+    defaultNetwork.settings = { dns_enabled = true; };
   };
 
   # Podman-related packages
@@ -20,4 +18,4 @@
     dive # Container image analyzer
     lazydocker # Terminal UI for containers
   ];
-} 
+}
