@@ -75,6 +75,28 @@ fi
 echo -e "${GREEN}✅ Pre-deployment checks passed${NC}"
 echo ""
 
+# Initialize submodules if needed
+if [[ -f "${FLAKE_DIR}/.gitmodules" ]] && [[ ! -f "${FLAKE_DIR}/private/.git" ]]; then
+    echo -e "${YELLOW}🔑 Initializing private submodule...${NC}"
+    cd "${FLAKE_DIR}"
+
+    # Configure git to use SSH config for submodule operations
+    git config submodule.private.sshCommand "ssh -F ${HOME}/.ssh/config"
+
+    # Ensure git uses SSH config for submodule operations
+    export GIT_SSH_COMMAND="ssh -F ${HOME}/.ssh/config"
+
+    if git submodule update --init --recursive; then
+        echo -e "${GREEN}✅ Submodule initialized${NC}"
+    else
+        echo -e "${RED}❌ Failed to initialize submodule${NC}"
+        echo -e "${YELLOW}💡 Make sure your SSH key is configured correctly in ~/.ssh/config${NC}"
+        echo -e "${YELLOW}💡 You can manually run: git config submodule.private.sshCommand 'ssh -F ~/.ssh/config'${NC}"
+        exit 1
+    fi
+    echo ""
+fi
+
 # Deployment steps
 echo -e "${BLUE}🔧 Starting deployment...${NC}"
 
