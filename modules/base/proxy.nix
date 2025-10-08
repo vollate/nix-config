@@ -14,56 +14,48 @@ in
   environment.systemPackages = with pkgs;
     [
       sing-box
-      #GUI.for.Singbox
+      gui-for-singbox
     ];
 
-  # Configure systemd service for sing-box
-  systemd.services.sing-box = {
-    description = "sing-box proxy service";
-    after = [ "network.target" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "simple";
-      # Set working directory to writable location
-      WorkingDirectory = "/var/lib/sing-box";
-      # Use the config file from nix store but run from writable directory
-      ExecStart = "${pkgs.sing-box}/bin/sing-box run -c ${singboxConfig}";
-      Restart = "on-failure";
-      RestartSec = 5;
-      # Run as root to create TUN interface
-      User = "root";
-      Group = "root";
-      
-      # Enhanced security settings for TUN interface
-      NoNewPrivileges = false;  # Allow new privileges for TUN creation
-      ProtectSystem = "strict";
-      ProtectHome = true;
-      # Allow write access to working directory and temp
-      ReadWritePaths = [ "/var/lib/sing-box" "/tmp" ];
-      PrivateTmp = true;
-      
-      # Enhanced network capabilities for TUN interface
-      AmbientCapabilities = [ 
-        "CAP_NET_ADMIN" 
-        "CAP_NET_BIND_SERVICE" 
-        "CAP_NET_RAW"
-      ];
-      CapabilityBoundingSet = [ 
-        "CAP_NET_ADMIN" 
-        "CAP_NET_BIND_SERVICE" 
-        "CAP_NET_RAW"
-      ];
-      
-      # Allow access to network interfaces
-      PrivateNetwork = false;
-      # Allow access to devices for TUN
-      PrivateDevices = false;
-    };
-  };
+  # Systemd service disabled - using gui-for-singbox instead
+  # systemd.services.sing-box = {
+  #   description = "sing-box proxy service";
+  #   after = [ "network.target" ];
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig = {
+  #     Type = "simple";
+  #     WorkingDirectory = "/var/lib/sing-box";
+  #     ExecStart = "${pkgs.sing-box}/bin/sing-box run -c ${singboxConfig}";
+  #     Restart = "on-failure";
+  #     RestartSec = 5;
+  #     User = "root";
+  #     Group = "root";
+  #
+  #     NoNewPrivileges = false;
+  #     ProtectSystem = "strict";
+  #     ProtectHome = true;
+  #     ReadWritePaths = [ "/var/lib/sing-box" "/tmp" ];
+  #     PrivateTmp = true;
+  #
+  #     AmbientCapabilities = [
+  #       "CAP_NET_ADMIN"
+  #       "CAP_NET_BIND_SERVICE"
+  #       "CAP_NET_RAW"
+  #     ];
+  #     CapabilityBoundingSet = [
+  #       "CAP_NET_ADMIN"
+  #       "CAP_NET_BIND_SERVICE"
+  #       "CAP_NET_RAW"
+  #     ];
+  #
+  #     PrivateNetwork = false;
+  #     PrivateDevices = false;
+  #   };
+  # };
 
-  # Create state directory with proper permissions
-  systemd.tmpfiles.rules = [ 
-    "d /var/lib/sing-box 0755 root root -" 
+  # Create state directory with proper permissions (still needed for GUI)
+  systemd.tmpfiles.rules = [
+    "d /var/lib/sing-box 0755 root root -"
   ];
 
   # Add the TUN interface to the firewall's trusted interfaces to allow traffic.
