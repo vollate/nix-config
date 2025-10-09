@@ -15,6 +15,10 @@
     libreoffice
     telegram-desktop
     vscode
+    # GUI framework dependencies
+    gtk3
+    webkitgtk
+    pkg-config
   ];
 
   # Enable dconf (required for many desktop applications)
