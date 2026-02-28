@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Programming languages and tools
@@ -13,11 +18,7 @@
     nodePackages.pnpm
 
     # Rust
-    rustc
-    cargo
-    rustfmt
-    clippy
-    cargo-cache
+    rustup
 
     # Go
     go
@@ -41,8 +42,8 @@
 
     # Nix
     nil # Nix language server
-    nixfmt-classic
-    nixpkgs-fmt
+    treefmt
+    nixfmt
 
     # Web development
     deno
@@ -69,6 +70,7 @@
     ninja
     autoconf
     automake
+    vcpkg
   ];
 
   # Enable programming services

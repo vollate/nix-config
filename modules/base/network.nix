@@ -1,4 +1,10 @@
-{ config, lib, pkgs, hostname, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  hostname,
+  ...
+}:
 
 {
   networking = {
@@ -6,7 +12,9 @@
     networkmanager.enable = true;
 
     # Enable firewall by default for security (can be overridden in host config)
-    firewall = { enable = lib.mkDefault true; };
+    firewall = {
+      enable = lib.mkDefault true;
+    };
   };
 
   # DNS configuration

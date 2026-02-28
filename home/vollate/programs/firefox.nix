@@ -1,35 +1,24 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   programs.firefox = {
     enable = true;
+    nativeMessagingHosts = [ pkgs.passff-host ];
 
-    # Firefox preferences
     profiles.default = {
       id = 0;
       name = "default";
       isDefault = true;
-
-      # Extensions (commented out until NUR is configured)
-      # extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-      #   ublock-origin
-      #   bitwarden
-      #   privacy-badger
-      # ];
-
       settings = {
-        # Privacy settings
-        "privacy.trackingprotection.enabled" = true;
-        "privacy.trackingprotection.socialtracking.enabled" = true;
-        "privacy.donottrackheader.enabled" = true;
-
-        # Performance
-        "browser.sessionstore.warnOnQuit" = false;
-        "browser.startup.page" = 3; # Restore previous session
-
-        # UI
+        "toolkit.tabbox.switchByScrolling" = true;
+        "identity.fxaccounts.enabled" = true;
         "browser.tabs.warnOnClose" = false;
-        "browser.urlbar.showSearchSuggestionsFirst" = false;
+        "browser.startup.page" = 3;
+
+        "gfx.webrender.all" = true;
+        "layers.acceleration.force-enabled" = true;
+        "media.ffmpeg.vaapi.enabled" = true;
+        "media.av1.enabled" = true;
       };
     };
   };

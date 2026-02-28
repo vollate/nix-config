@@ -1,10 +1,15 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Host-specific networking configuration
   networking = {
-    # Enable wake-on-lan
-    interfaces.enp3s0.wakeOnLan.enable = true;
+    # Disable wake-on-lan for non-existent interface to prevent boot timeout
+    # interfaces.enp3s0.wakeOnLan.enable = true;
 
     # Firewall configuration moved to main default.nix file
 

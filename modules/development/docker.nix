@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Enable Podman
@@ -9,7 +14,9 @@
     dockerCompat = true;
 
     # Default network
-    defaultNetwork.settings = { dns_enabled = true; };
+    defaultNetwork.settings = {
+      dns_enabled = true;
+    };
   };
 
   # Podman-related packages

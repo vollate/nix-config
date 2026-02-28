@@ -6,23 +6,23 @@ default:
     just --list
 
 # Deploy the configuration to the current host
-deploy host="tb-amd-6800h":
-    sudo nixos-rebuild switch --flake .#{{host}} --accept-flake-config
+deploy host="${HOST}":
+    sudo --preserve-env=SSH_AUTH_SOCK nixos-rebuild switch --flake .#{{host}} --accept-flake-config
 
-debug host="tb-amd-6800h":
+debug host="${HOST}":
     sudo nixos-rebuild switch --flake .#{{host}} --accept-flake-config --show-trace
 
-# Update and deploy the configuration  
-update host="tb-amd-6800h":
-    nix flake update --accept-flake-config 
-    sudo nixos-rebuild switch --flake .#{{host}} --accept-flake-config  
+# Update and deploy the configuration
+update host="${HOST}":
+    nix flake update --accept-flake-config
+    sudo nixos-rebuild switch --flake .#{{host}} --accept-flake-config
 
 # Build configuration without deploying
-build host="tb-amd-6800h":
+build host="${HOST}":
     nix build .#nixosConfigurations.{{host}}.config.system.build.toplevel
 
 # Check configuration for errors
-check host="tb-amd-6800h":
+check host="${HOST}":
     nix flake check
     nixos-rebuild dry-build --flake .#{{host}}
 
@@ -33,7 +33,7 @@ clean:
 
 # Format all Nix files
 fmt:
-    nix fmt --accept-flake-config  
+    treefmt
 
 # Enter development shell
 dev:
@@ -48,7 +48,7 @@ update-input input:
     nix flake update {{input}}
 
 # Diff current and new configuration
-diff host="tb-amd-6800h":
+diff host="${HOST}":
     nixos-rebuild build --flake .#{{host}}
     nix --extra-experimental-features nix-command profile diff-closures --profile /nix/var/nix/profiles/system
 
@@ -61,7 +61,7 @@ rollback:
     sudo nixos-rebuild switch --rollback
 
 # Install using the installation script
-install host="tb-amd-6800h":
+install host="${HOST}":
     ./scripts/install.sh {{host}}
 
 # Search for packages
@@ -73,6 +73,6 @@ info-pkg package:
     nix eval --raw nixpkgs#{{package}}.meta.description
 
 # Test configuration in a VM
-test-vm host="tb-amd-6800h":
+test-vm host="${HOST}":
     nixos-rebuild build-vm --flake .#{{host}}
-    ./result/bin/run-*-vm 
+    ./result/bin/run-*-vm

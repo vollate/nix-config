@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Enable virtualization
@@ -30,14 +35,13 @@
     spice
     spice-gtk
     spice-protocol
-    win-virtio
+    virtio-win
     win-spice
     qemu
     OVMF
 
     # Podman tools
     podman-compose
-    #podman-desktop
   ];
 
   # Enable SPICE USB redirection

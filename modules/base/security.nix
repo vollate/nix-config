@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Security configurations
@@ -7,13 +12,17 @@
     polkit.enable = true;
 
     # Allow users in wheel group to use sudo without password for system management
-    sudo.extraRules = [{
-      users = [ "wheel" ];
-      commands = [{
-        command = "ALL";
-        options = [ "NOPASSWD" ];
-      }];
-    }];
+    sudo.extraRules = [
+      {
+        users = [ "wheel" ];
+        commands = [
+          {
+            command = "ALL";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+      }
+    ];
   };
 
   # PAM configuration
@@ -26,7 +35,7 @@
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
-    pinentryPackage = pkgs.pinentry-curses;
+    pinentryPackage = pkgs.pinentry-qt;
   };
 
   # AppArmor (optional, can be enabled for additional security)

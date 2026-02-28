@@ -22,17 +22,17 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
     # Network timeout settings
-    connect-timeout = 10;
+    connect-timeout = 60; # Increase timeout for slow connections
   };
 
   inputs = {
     self.submodules = true;
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -42,11 +42,24 @@
       flake = false;
     };
 
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Add more inputs as needed
     # catppuccin.url = "github:catppuccin/nix";
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, private, ... }:
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      home-manager,
+      private,
+      sops-nix,
+      ...
+    }:
     let
       # Import our custom library
       myLib = import ./lib {
@@ -55,11 +68,12 @@
       };
 
       # Import overlays
-      overlays = import ./overlays;
+      overlays = import ./overlays inputs;
 
       # Import secrets
       secrets = import ./private/secrets.nix;
-    in {
+    in
+    {
       # NixOS configurations
       nixosConfigurations = {
         # Desktop with Plasma
@@ -69,6 +83,16 @@
           desktop = "plasma";
           system = "x86_64-linux";
           overlays = overlays; # Apply overlays
+          specialArgs = { inherit secrets; };
+        };
+
+        # MSI with Intel i7-12700 and Plasma desktop
+        msi-intel-12700 = myLib.mkHost {
+          hostname = "msi-intel-12700";
+          username = "vollate";
+          desktop = "plasma";
+          system = "x86_64-linux";
+          overlays = overlays;
           specialArgs = { inherit secrets; };
         };
 
@@ -84,26 +108,28 @@
       };
 
       # Development shells
-      devShells = nixpkgs.lib.genAttrs [ "x86_64-linux" ] (system:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in {
+      devShells = nixpkgs.lib.genAttrs [ "x86_64-linux" ] (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
           default = pkgs.mkShell {
             buildInputs = with pkgs; [
               nil # Nix language server
-              nixfmt-classic
+              nixfmt
               git
             ];
             shellHook = ''
               echo "Welcome to NixOS configuration development environment!"
-              echo "Available commands:"
-              echo "  nil          - Nix language server"
-              echo "  nixfmt-classic - Nix formatter"
             '';
           };
-        });
+        }
+      );
 
       # Formatter for nix fmt
-      formatter = nixpkgs.lib.genAttrs [ "x86_64-linux" ]
-        (system: nixpkgs.legacyPackages.${system}.nixfmt-classic);
+      formatter = nixpkgs.lib.genAttrs [ "x86_64-linux" ] (
+        system: nixpkgs.legacyPackages.${system}.nixfmt
+      );
     };
 }

@@ -1,3 +1,7 @@
 [submodule "private"]
 	path = private
 	url = git@github.com:vollate/nix-private.git
+	branch = main
+[submodule "dot-config"]
+	path = dot-config
+	url = git@github.com:vollate/dot-config.git

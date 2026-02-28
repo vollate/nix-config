@@ -5,14 +5,21 @@ final: prev: {
   # Create a Neovim package with Node.js included
   neovim-with-nodejs = prev.symlinkJoin {
     name = "neovim-with-nodejs";
-    paths = with prev; [ neovim nodejs nodePackages.pnpm ];
+    paths = with prev; [
+      neovim
+      nodejs
+      nodePackages.pnpm
+    ];
 
     # Set environment variables to ensure coc-nvim can find Node.js
     buildInputs = with prev; [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/nvim \
         --prefix PATH : ${
-          prev.lib.makeBinPath [ prev.nodejs prev.nodePackages.pnpm ]
+          prev.lib.makeBinPath [
+            prev.nodejs
+            prev.nodePackages.pnpm
+          ]
         }
     '';
 

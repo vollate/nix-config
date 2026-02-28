@@ -1,23 +1,40 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
-  # Enable KDE Plasma Desktop Environment
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
 
-  # KDE-specific packages
-  environment.systemPackages = with pkgs; [
-    kdePackages.kate
-    kdePackages.dolphin
-    kdePackages.konsole
-    kdePackages.spectacle
-    kdePackages.ark
-    kdePackages.yakuake
-    kdePackages.kcolorchooser
-    kdePackages.kruler
-    kdePackages.okular
+  services.displayManager.sddm.wayland.enable = true;
+  services.displayManager.defaultSession = "plasma";
+
+  # Auto-login configuration
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "vollate";
+  };
+
+  services.displayManager.sddm.settings.General.DisplayServer = "wayland";
+
+  environment.systemPackages = with pkgs.kdePackages; [
+    pkgs.wl-clipboard
+    kate
+    dolphin
+    konsole
+    spectacle
+    ark
+    yakuake
+    kcolorchooser
+    okular
+    kde-gtk-config
+  ];
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    discover
   ];
 
-  # Enable KDE Connect
   programs.kdeconnect.enable = true;
 }

@@ -1,21 +1,30 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
-let
-  # Generate a unique hash config file in nix store
-  singboxConfig = pkgs.writeText "sing-box-config.json" 
-    (builtins.readFile "${inputs.private}/singbox/config.json");
-in
 {
   # Load the TUN kernel module, required for sing-box to create TUN interfaces.
   boot.kernelModules = [ "tun" ];
 
   # Add sing-box related packages.
   # This includes the core service and the GUI application.
-  environment.systemPackages = with pkgs;
-    [
-      sing-box
-      gui-for-singbox
-    ];
+  environment.systemPackages = with pkgs; [
+    sing-box
+    (symlinkJoin {
+      name = "gui-for-singbox-wayland-fixed";
+      paths = [ gui-for-singbox ];
+      nativeBuildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/GUI.for.SingBox \
+          --prefix XDG_DATA_DIRS : "${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}:${gtk3}/share/gsettings-schemas/${gtk3.name}" \
+          --set GIO_MODULE_DIR "${glib-networking}/lib/gio/modules/"
+      '';
+    })
+  ];
 
   # Systemd service disabled - using gui-for-singbox instead
   # systemd.services.sing-box = {
@@ -59,25 +68,18 @@ in
   ];
 
   # Add the TUN interface to the firewall's trusted interfaces to allow traffic.
-  networking.firewall.trustedInterfaces = [ "Sing-Box" ];
-  
+  networking.firewall.trustedInterfaces = [
+    "Sing-Box"
+    "podman0"
+  ];
+
   # Enable IP forwarding for TUN interface
   boot.kernel.sysctl = {
     "net.ipv4.ip_forward" = 1;
     "net.ipv6.conf.all.forwarding" = 1;
   };
 
-  # DNS configuration optimized for sing-box TUN mode
-  # Use TUN interface gateway as primary DNS for DNS hijacking
-  networking.nameservers = [
-    "172.18.0.1"    # TUN interface gateway (sing-box will handle DNS routing)
-    "223.5.5.5"     # AliDNS fallback 
-    "119.29.29.29"  # DNSPod fallback
-  ];
-
-  # Disable systemd-resolved to avoid DNS conflicts
   services.resolved.enable = false;
-  
-  # Ensure NetworkManager uses the specified DNS servers
+
   networking.networkmanager.dns = "none";
 }

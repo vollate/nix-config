@@ -1,52 +1,42 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  hostname,
+  ...
+}:
 
 {
+  home.packages = with pkgs; [
+    antidote
+  ];
+
   programs.zsh = {
     enable = true;
-    enableCompletion = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
-
-    history = {
-      size = 10000;
-      path = "${config.xdg.dataHome}/zsh/history";
-    };
-
-    shellAliases = {
-      ll = "eza -l";
-      la = "eza -la";
-      ls = "eza";
-      cat = "bat";
-      grep = "rg";
-      find = "fd";
-      cd = "z";
-
-      # Git aliases
-      g = "git";
-      ga = "git add";
-      gc = "git commit";
-      gp = "git push";
-      gl = "git pull";
-      gs = "git status";
-      gd = "git diff";
-
-      # NixOS aliases
-      rebuild = "sudo nixos-rebuild switch --flake .";
-      upgrade = "sudo nixos-rebuild switch --upgrade --flake .";
-      cleanup = "sudo nix-collect-garbage -d";
-    };
-
-    oh-my-zsh = {
-      enable = true;
-      plugins = [ "git" "sudo" "docker" "kubectl" "systemd" ];
-    };
-
     initContent = ''
-      # Zoxide integration
-      eval "$(zoxide init zsh)"
+      # Source shared profile (SSH agent, etc.)
+      if [[ -f $ZDOTDIR/profile_shared ]]; then
+        source $ZDOTDIR/profile_shared
+      fi
+      # Source shared zshrc (plugins, completions, p10k, etc.)
+      if [[ -f $ZDOTDIR/zshrc_shared ]]; then
+        source $ZDOTDIR/zshrc_shared
+      fi
+    '';
+    dotDir = "${config.xdg.configHome}/zsh";
+  };
 
-      # Starship prompt
-      eval "$(starship init zsh)"
+  xdg.configFile = {
+    "zsh/zshrc_shared".source = ../../../dot-config/.zshrc;
+    "zsh/profile_shared".source = ../../../dot-config/.profile;
+    "zsh/.zsh_plugins.txt".source = ../../../dot-config/.zsh_plugins.txt;
+    "zsh/shell_func.sh".source = ../../../dot-config/.shell_func.sh;
+    "zsh/profile.local".text = ''
+      export ANTIDOTE_DIR=${pkgs.antidote}
+      export HOST=${hostname}
+      export MIXIN_PROXY_PORT=20122
+      export VKEY=$HOME/.ssh/vollate_github
+      declare -a SSH_KEYCHAIN=("$VKEY")
     '';
   };
 }

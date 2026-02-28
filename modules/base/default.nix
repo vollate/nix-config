@@ -9,22 +9,26 @@
     ./nix.nix
     ./proxy.nix
     ./security.nix
+    ./ssh.nix
+    ./keyboard.nix
   ];
-
-  # System basics
-  system.stateVersion = "24.11";
 
   # Essential system packages
   environment.systemPackages = with pkgs; [
-    neovim
+    neovim # Basic editor (may be overridden by overlays)
     wget
     curl
     git
     sysstat
-    htop
     tree
     unzip
     zip
     gnupg
   ];
+
+  # FHS compatibility for non-NixOS binaries (VSCode Server, dynamic executables)
+  programs.nix-ld = {
+    enable = true;
+    package = pkgs.nix-ld;
+  };
 }

@@ -1,13 +1,27 @@
-{ config, lib, pkgs, inputs, username, hostname, secrets, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  username,
+  hostname,
+  secrets,
+  ...
+}:
 
 {
-  imports = [ ./programs ./shell ./desktop ];
+  imports = [
+    ./programs
+    ./desktop
+    ./develop
+    ./shell
+  ];
 
   # Home Manager configuration
   home = {
     username = username;
     homeDirectory = "/home/${username}";
-    stateVersion = "24.11";
+    stateVersion = "25.11";
 
     # User packages
     packages = with pkgs; [
@@ -18,20 +32,10 @@
       bat
       fzf
       zoxide
-      starship
-
-      # Media
-      spotify
-      mpv
-      yt-dlp
-
-      # Development
-      gh
-      lazygit
+      pwgen
 
       # System
       neofetch
-      btop
       tree
     ];
   };

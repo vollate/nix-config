@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # 安装 neovim 和相关工具
@@ -19,11 +24,9 @@
   ];
 
   # Manage ~/.config/nvim directory
-  xdg.configFile = {
-    "nvim" = {
-      source = ./nvim-config;
-      recursive = true;
-    };
+  xdg.configFile."nvim" = {
+    source = ../../../dot-config/.config/nvim;
+    recursive = true;
   };
 
   # Set environment variables

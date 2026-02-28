@@ -1,9 +1,13 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # AMD CPU optimizations
-  hardware.cpu.amd.updateMicrocode =
-    lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   # Power management
   powerManagement = {
@@ -23,11 +27,8 @@
     enable = true;
     enable32Bit = true;
 
-    # For AMD graphics - basic support
-    extraPackages = with pkgs; [ amdvlk ];
-
-    # For 32-bit support
-    extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
+    # For AMD graphics - RADV driver is enabled by default
+    # amdvlk has been removed since it was deprecated by AMD
   };
 
   # Enable firmware updates
@@ -37,6 +38,10 @@
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
-    settings = { General = { Enable = "Source,Sink,Media,Socket"; }; };
+    settings = {
+      General = {
+        Enable = "Source,Sink,Media,Socket";
+      };
+    };
   };
 }
