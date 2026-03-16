@@ -35,7 +35,7 @@
       pwgen
 
       # System
-      neofetch
+      fastfetch
       tree
     ];
   };

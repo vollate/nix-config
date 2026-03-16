@@ -27,6 +27,6 @@
   environment.systemPackages = with pkgs; [
     pavucontrol
     pulsemixer
-    helvum # PipeWire graph editor
+    crosspipe # PipeWire graph editor
   ];
 }
