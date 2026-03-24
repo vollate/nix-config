@@ -15,7 +15,7 @@
 
   # Essential system packages
   environment.systemPackages = with pkgs; [
-    neovim # Basic editor (may be overridden by overlays)
+    neovim # Basic editor for root
     wget
     curl
     git

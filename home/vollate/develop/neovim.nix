@@ -16,11 +16,9 @@
     ripgrep # telescope/搜索需要
     fd # 文件查找需要
 
-    # 可选的格式化工具 (可以通过 coc 扩展管理)
-    # stylua
-    # nixfmt
-    # black
-    # prettier
+    # Real vim/vi wrapper binaries (shadow system vim in PATH)
+    (writeShellScriptBin "vim" "exec nvim \"$@\"")
+    (writeShellScriptBin "vi" "exec nvim \"$@\"")
   ];
 
   # Manage ~/.config/nvim directory
@@ -33,11 +31,5 @@
   home.sessionVariables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
-  };
-
-  # Add shell aliases
-  home.shellAliases = {
-    vi = "nvim";
-    vim = "nvim";
   };
 }
