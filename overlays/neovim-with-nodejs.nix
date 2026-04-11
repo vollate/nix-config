@@ -8,7 +8,7 @@ final: prev: {
     paths = with prev; [
       neovim
       nodejs
-      nodePackages.pnpm
+      pnpm
     ];
 
     # Set environment variables to ensure coc-nvim can find Node.js
@@ -18,7 +18,7 @@ final: prev: {
         --prefix PATH : ${
           prev.lib.makeBinPath [
             prev.nodejs
-            prev.nodePackages.pnpm
+            prev.pnpm
           ]
         }
     '';

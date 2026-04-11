@@ -15,7 +15,7 @@
 
     # Node.js
     nodejs
-    nodePackages.pnpm
+    pnpm
 
     # Rust
     rustup
