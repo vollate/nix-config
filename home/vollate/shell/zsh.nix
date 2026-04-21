@@ -32,7 +32,7 @@
     "zsh/.zsh_plugins.txt".source = ../../../dot-config/.zsh_plugins.txt;
     "zsh/shell_func.sh".source = ../../../dot-config/.shell_func.sh;
     "zsh/profile.local".text = ''
-      export ANTIDOTE_DIR=${pkgs.antidote}
+      export ANTIDOTE_PATH=${pkgs.antidote}/share/antidote/antidote.zsh
       export HOST=${hostname}
       export MIXIN_PROXY_PORT=20122
       export VKEY=$HOME/.ssh/vollate_github

@@ -52,7 +52,7 @@
     # Database tools
     sqlite
     postgresql
-    mysql80
+    mariadb
 
     # Container tools
     podman
@@ -84,7 +84,7 @@
     # MySQL
     mysql = {
       enable = lib.mkDefault false;
-      package = pkgs.mysql80;
+      package = pkgs.mariadb;
     };
   };
 }
