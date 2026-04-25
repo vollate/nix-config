@@ -15,6 +15,7 @@
     # 基础工具
     ripgrep # telescope/搜索需要
     fd # 文件查找需要
+    tree-sitter # nvim-treesitter (new API) requires the tree-sitter CLI
 
     # Real vim/vi wrapper binaries (shadow system vim in PATH)
     (writeShellScriptBin "vim" "exec nvim \"$@\"")
