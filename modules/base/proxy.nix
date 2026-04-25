@@ -20,6 +20,7 @@
       nativeBuildInputs = [ makeWrapper ];
       postBuild = ''
         wrapProgram $out/bin/GUI.for.SingBox \
+          --run 'runtime_dir="''${XDG_CONFIG_HOME:-$HOME/.config}/GUI.for.Singbox"; mkdir -p "$runtime_dir"; cd "$runtime_dir"' \
           --prefix XDG_DATA_DIRS : "${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}:${gtk3}/share/gsettings-schemas/${gtk3.name}" \
           --set GIO_MODULE_DIR "${glib-networking}/lib/gio/modules/"
       '';

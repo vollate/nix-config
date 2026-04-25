@@ -7,7 +7,7 @@
 
 {
   imports = [
-    ./claude-code.nix
+    ./ai-coding.nix
     ./neovim.nix
     ./jetbrains.nix
     ./rustup.nix
