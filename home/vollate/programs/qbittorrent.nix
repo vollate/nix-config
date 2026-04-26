@@ -1,10 +1,9 @@
 { config, pkgs, ... }:
 
 let
-  # 纯 Nix 方式：自动从 GitHub 拉取 VueTorrent 主题包
   vueTorrentTheme = pkgs.fetchzip {
-    url = "https://github.com/VueTorrent/VueTorrent/releases/download/v2.31.3/vuetorrent.zip";
-    sha256 = "sha256-mthdc2pXLKTjDv7iTxbwFJuT/lHTQcT1QtzxaZFuXBo=";
+    url = "https://github.com/VueTorrent/VueTorrent/releases/download/v2.32.1/vuetorrent.zip";
+    sha256 = "sha256-md6UckHoMhnUAg2Kn3FqvzgEOBvfi8fTaTdbErvU73s=";
     stripRoot = false;
   };
 in
