@@ -9,6 +9,7 @@ final: prev: {
       neovim
       nodejs
       pnpm
+      tombi
     ];
 
     # Set environment variables to ensure coc-nvim can find Node.js

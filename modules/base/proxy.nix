@@ -14,40 +14,7 @@
   # This includes the core service and the GUI application.
   environment.systemPackages = with pkgs; [
     sing-box
-    (symlinkJoin {
-      name = "gui-for-singbox-wayland-fixed";
-      paths = [ gui-for-singbox ];
-      postBuild = ''
-        rm "$out/bin/GUI.for.SingBox"
-        cat > "$out/bin/GUI.for.SingBox" <<'EOF'
-        #!${runtimeShell}
-        set -eu
-
-        runtime_dir="''${XDG_CONFIG_HOME:-$HOME/.config}/GUI.for.SingBox"
-        source_bin="${gui-for-singbox}/bin/GUI.for.SingBox"
-        runtime_bin="$runtime_dir/GUI.for.SingBox"
-        schema_dirs="${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}:${gtk3}/share/gsettings-schemas/${gtk3.name}"
-
-        ${coreutils}/bin/mkdir -p "$runtime_dir"
-
-        if [ ! -e "$runtime_bin" ] || ! ${coreutils}/bin/cmp -s "$source_bin" "$runtime_bin"; then
-          ${coreutils}/bin/install -Dm755 "$source_bin" "$runtime_bin.tmp"
-          ${coreutils}/bin/mv "$runtime_bin.tmp" "$runtime_bin"
-        fi
-
-        export GIO_MODULE_DIR="${glib-networking}/lib/gio/modules/"
-        if [ -n "''${XDG_DATA_DIRS:-}" ]; then
-          export XDG_DATA_DIRS="$schema_dirs:$XDG_DATA_DIRS"
-        else
-          export XDG_DATA_DIRS="$schema_dirs"
-        fi
-
-        cd "$runtime_dir"
-        exec "$runtime_bin" "$@"
-        EOF
-        chmod +x "$out/bin/GUI.for.SingBox"
-      '';
-    })
+    #gui-for-singbox
   ];
 
   # Systemd service disabled - using gui-for-singbox instead

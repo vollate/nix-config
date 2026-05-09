@@ -5,6 +5,17 @@
   ...
 }:
 
+let
+  pinentryWrapper = pkgs.writeShellScriptBin "pinentry" ''
+    if [ -n "''${SSH_CONNECTION:-}" ]; then
+      exec ${pkgs.pinentry-curses}/bin/pinentry-curses "$@"
+    elif [ -n "''${DISPLAY:-}" ] || [ -n "''${WAYLAND_DISPLAY:-}" ]; then
+      exec ${pkgs.pinentry-qt}/bin/pinentry-qt "$@"
+    else
+      exec ${pkgs.pinentry-curses}/bin/pinentry-curses "$@"
+    fi
+  '';
+in
 {
   # Security configurations
   security = {
@@ -35,7 +46,7 @@
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
-    pinentryPackage = pkgs.pinentry-qt;
+    pinentryPackage = pinentryWrapper;
   };
 
   # AppArmor (optional, can be enabled for additional security)
