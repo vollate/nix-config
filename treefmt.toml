@@ -50,7 +50,7 @@
 # The method used to traverse the files within the tree root
 # Currently, we support 'auto', 'git', 'jujutsu', or 'filesystem'
 # Env $TREEFMT_WALK
-# walk = "filesystem"
+walk = "filesystem"
 
 [formatter.nix]
 command = "nixfmt"
@@ -61,16 +61,16 @@ command = "rustfmt"
 options = ["--edition", "2018"]
 includes = ["*.rs"]
 
-#[formatter.mylanguage]
+# [formatter.mylanguage]
 ## Command to execute
-#command = "command-to-run"
+# command = "command-to-run"
 ## Command-line arguments for the command
-#options = []
+# options = []
 ## Glob pattern of files to include
-#includes = ["*.<language-extension>"]
+# includes = ["*.<language-extension>"]
 ## Glob patterns of files to exclude
-#excludes = []
+# excludes = []
 ## Controls the order of application when multiple formatters match the same file
 ## Lower the number, the higher the precedence
 ## Default is 0
-#priority = 0
+# priority = 0
