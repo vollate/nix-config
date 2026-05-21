@@ -6,15 +6,21 @@
   ...
 }:
 
+let
+  pkgsUnstable = import inputs.nixpkgs-unstable {
+    system = pkgs.stdenv.hostPlatform.system;
+    config = config.nixpkgs.config;
+  };
+in
 {
   # Load the TUN kernel module, required for sing-box to create TUN interfaces.
   boot.kernelModules = [ "tun" ];
 
   # Add sing-box related packages.
   # This includes the core service and the GUI application.
-  environment.systemPackages = with pkgs; [
-    sing-box
-    #gui-for-singbox
+  environment.systemPackages = [
+    pkgs.sing-box
+    pkgsUnstable.gui-for-singbox
   ];
 
   # Systemd service disabled - using gui-for-singbox instead
