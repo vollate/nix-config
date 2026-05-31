@@ -5,17 +5,6 @@
   ...
 }:
 
-let
-  pinentryWrapper = pkgs.writeShellScriptBin "pinentry" ''
-    if [ -n "''${SSH_CONNECTION:-}" ]; then
-      exec ${pkgs.pinentry-curses}/bin/pinentry-curses "$@"
-    elif [ -n "''${DISPLAY:-}" ] || [ -n "''${WAYLAND_DISPLAY:-}" ]; then
-      exec ${pkgs.pinentry-qt}/bin/pinentry-qt "$@"
-    else
-      exec ${pkgs.pinentry-curses}/bin/pinentry-curses "$@"
-    fi
-  '';
-in
 {
   programs.gpg = {
     enable = true;
@@ -48,20 +37,4 @@ in
       throw-keyids = true;
     };
   };
-
-  # GPG Agent service
-  services.gpg-agent = {
-    enable = false;
-    enableSshSupport = true;
-    enableZshIntegration = true;
-    enableBashIntegration = true;
-
-    defaultCacheTtl = 1800; # 30 minutes
-    defaultCacheTtlSsh = 1800; # 30 minutes
-    maxCacheTtl = 7200; # 2 hours
-    maxCacheTtlSsh = 7200; # 2 hours
-
-    pinentry.package = pinentryWrapper;
-  };
-
 }

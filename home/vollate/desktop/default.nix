@@ -28,7 +28,6 @@
     kdePackages.kate
     kdePackages.konsole
     kdePackages.yakuake
-    kdePackages.kgpg
   ];
 
   # Desktop environment specific settings
