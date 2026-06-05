@@ -77,6 +77,4 @@ in
   };
 
   services.resolved.enable = false;
-
-  networking.networkmanager.dns = "none";
 }
