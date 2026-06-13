@@ -18,12 +18,15 @@ in
       experimental-features = [
         "nix-command"
         "flakes"
+        "configurable-impure-env"
       ];
+
+      impure-env = "GOPROXY=https://goproxy.cn,direct";
 
       # Binary cache mirrors for China
       substituters = [
+        "https://mirrors.cernet.edu.cn/nix-channels/store"
         "https://mirrors.ustc.edu.cn/nix-channels/store"
-        "https://mirror.sjtu.edu.cn/nix-channels/store"
         "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
         "https://cache.nixos.org"
         "https://nix-community.cachix.org"
@@ -86,4 +89,6 @@ in
       HTTPS_PROXY = httpsProxy;
     }
   );
+
+  environment.sessionVariables.GOPROXY = "https://goproxy.cn,direct";
 }

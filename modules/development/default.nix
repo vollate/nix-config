@@ -11,7 +11,7 @@
     ./docker.nix
     ./virtualisation.nix
     ./monitor.nix
-
+    ./nix-dev-container.nix
   ];
 
   options.nixosVollate.graphicsVendor = lib.mkOption {
