@@ -1,9 +1,9 @@
-{ config, pkgs, ... }:
+{ lib, config, pkgs, ... }:
 
 let
   vueTorrentTheme = pkgs.fetchzip {
-    url = "https://github.com/VueTorrent/VueTorrent/releases/download/v2.32.1/vuetorrent.zip";
-    sha256 = "sha256-md6UckHoMhnUAg2Kn3FqvzgEOBvfi8fTaTdbErvU73s=";
+    url = "https://github.com/VueTorrent/VueTorrent/releases/download/v2.34.0/vuetorrent.zip";
+    sha256 = "sha256-1AElVp46YHGpPA/aX5ASPIiMhdiEGDR1Ne2nHnviGY4=";
     stripRoot = false;
   };
 in
