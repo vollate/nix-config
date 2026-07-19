@@ -3,7 +3,11 @@
   services.keyd = {
     enable = true;
     keyboards.default = {
-      ids = [ "*" ];
+      ids = [
+        "*"
+        # Sunshine virtual input devices use vendor/product ID beef:dead.
+        "-beef:dead"
+      ];
       settings.main = {
         capslock = "overload(control, esc)";
         esc = "capslock";
