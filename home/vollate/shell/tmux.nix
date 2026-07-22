@@ -8,6 +8,7 @@
 {
   programs.tmux = {
     enable = true;
+    baseIndex = 1;
     mouse = true;
     keyMode = "vi";
     terminal = "screen-256color";
@@ -30,6 +31,8 @@
       }
     ];
     extraConfig = ''
+      set -g renumber-windows on
+
       set -g prefix2 C-a
       bind C-a send-prefix -2
 
