@@ -10,6 +10,7 @@
   home.packages = with pkgs; [
     #claude-code
     codex
+    pi-coding-agent
     openspec
   ];
 
