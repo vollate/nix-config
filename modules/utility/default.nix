@@ -7,6 +7,7 @@
 
 {
   imports = [
+    ./password-manager.nix
     ./rclone.nix
   ];
 }
