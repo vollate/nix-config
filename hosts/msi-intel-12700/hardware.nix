@@ -46,6 +46,13 @@
 
   services.fwupd.enable = true;
 
+  # HDD0: enforce writeback independently of /dev/bcacheN numbering.
+  # Cache attachment is stored in bcache metadata; this rule never formats disks.
+  # Writeback requires a healthy cache: losing it can lose unflushed HDD0 data.
+  services.udev.extraRules = ''
+    ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="bcache[0-9]*", ENV{ID_FS_UUID}=="fe687bf7-13bb-4e2c-bd26-f944efba5291", ATTR{bcache/cache_mode}="writeback"
+  '';
+
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
