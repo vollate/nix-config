@@ -12,8 +12,7 @@
     # File manager
     kdePackages.dolphin
 
-    # Browser
-    firefox
+    # Firefox is installed and configured through programs.firefox.
     google-chrome
 
     # Media

@@ -12,10 +12,15 @@ deploy host="${HOST}":
 debug host="${HOST}":
     sudo nixos-rebuild switch --flake .#{{host}} --accept-flake-config --show-trace
 
-# Update and deploy the configuration
-update host="${HOST}":
+# Update only flake.lock
+update:
     nix flake update --accept-flake-config
-    sudo nixos-rebuild switch --flake .#{{host}} --accept-flake-config
+
+# Update inputs, verify the configuration, and deploy to $HOST
+upgrade:
+    just update
+    just check
+    just deploy
 
 # Build configuration without deploying
 build host="${HOST}":
@@ -25,6 +30,10 @@ build host="${HOST}":
 check host="${HOST}":
     nix flake check
     nixos-rebuild dry-build --flake .#{{host}}
+
+# GC system generations outside the newest 3 AND older than 7 days
+gc:
+    sudo bash scripts/gc.sh
 
 # Clean old generations and garbage collect
 clean:

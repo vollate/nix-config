@@ -36,8 +36,8 @@
       set -g prefix2 C-a
       bind C-a send-prefix -2
 
-      bind s split-window -v
-      bind v split-window -h
+      bind s split-window -v -c '#{pane_current_path}'
+      bind v split-window -h -c '#{pane_current_path}'
 
       set -g @yank_with_mouse on
       set -g @prefix_highlight_show_copy_mode on

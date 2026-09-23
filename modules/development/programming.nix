@@ -71,6 +71,9 @@
     autoconf
     automake
     vcpkg
+
+    # Statistic tools
+    tokei
   ];
 
   # Enable programming services

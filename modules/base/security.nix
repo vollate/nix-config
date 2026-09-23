@@ -153,6 +153,7 @@ in
   security = {
     rtkit.enable = true;
     polkit.enable = true;
+    polkit.enablePkexecWrapper = true;
 
     # Allow users in wheel group to use sudo without password for system management
     sudo.extraRules = [
