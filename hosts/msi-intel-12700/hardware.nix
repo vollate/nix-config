@@ -34,6 +34,23 @@
     ];
   };
 
+  # Keep Intel as the primary GPU; use the GTX 1080 on demand.
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia = {
+    # Pascal requires the proprietary kernel module and the 580 legacy branch.
+    package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
+    open = false;
+    modesetting.enable = true;
+    prime = {
+      intelBusId = "PCI:0:2:0";
+      nvidiaBusId = "PCI:1:0:0";
+      offload = {
+        enable = true;
+        enableOffloadCmd = true;
+      };
+    };
+  };
+
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "iHD";
     VDPAU_DRIVER = "va_gl";

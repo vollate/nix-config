@@ -12,5 +12,6 @@
     goland
     pycharm
     rust-rover
+    datagrip
   ];
 }
