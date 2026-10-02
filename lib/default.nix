@@ -80,6 +80,7 @@ rec {
           ../modules/base
           ../modules/desktop
           ../modules/development
+          ../modules/game
           ../modules/utility
         ]
         ++ (args.modules or [ ]);
