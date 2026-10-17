@@ -5,8 +5,9 @@
     keyboards.default = {
       ids = [
         "*"
-        # Sunshine virtual input devices use vendor/product ID beef:dead.
-        "-beef:dead"
+        # Leave Sunshine input unchanged: the client already applies its remaps.
+        "-beef:dead" # Legacy Sunshine virtual keyboard.
+        "-1209:0002" # Sunshine's libvirtualhid Keyboard.
       ];
       settings.main = {
         capslock = "overload(control, esc)";

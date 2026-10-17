@@ -34,12 +34,12 @@
     ];
   };
 
-  # Keep Intel as the primary GPU; use the GTX 1080 on demand.
+  # Keep Intel as the primary GPU; use the RTX 3070 Ti on demand.
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
-    # Pascal requires the proprietary kernel module and the 580 legacy branch.
-    package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
-    open = false;
+    # Ampere supports the current stable driver and NVIDIA's open kernel module.
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    open = true;
     modesetting.enable = true;
     prime = {
       intelBusId = "PCI:0:2:0";
