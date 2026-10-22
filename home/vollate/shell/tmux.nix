@@ -12,8 +12,10 @@
     mouse = true;
     keyMode = "vi";
     terminal = "screen-256color";
+    # Load sensible before our limits; it otherwise raises the default history limit.
+    sensibleOnTop = true;
+    historyLimit = 20000;
     plugins = with pkgs.tmuxPlugins; [
-      sensible
       yank
       prefix-highlight
       {
@@ -31,6 +33,12 @@
       }
     ];
     extraConfig = ''
+      # Limits are per pane / automatic paste buffer, not a server-wide RAM cap.
+      set -s buffer-limit 10
+      set -s input-buffer-size 1048576
+      # Still allow copying out, but do not accept application-created OSC 52 buffers.
+      set -s set-clipboard external
+
       set -g renumber-windows on
 
       set -g prefix2 C-a

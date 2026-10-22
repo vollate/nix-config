@@ -8,6 +8,7 @@
 {
   imports = [
     ./programming.nix
+    ./reverse.nix
     ./docker.nix
     ./virtualisation.nix
     ./monitor.nix
