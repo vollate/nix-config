@@ -8,14 +8,34 @@
 
 {
   home.packages = with pkgs; [
-    #claude-code
+    claude-code
     codex
     pi-coding-agent
     openspec
   ];
 
+  # Keep Pi settings writable for /settings and package management.
+  home.activation.piFullscreen = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    settings_dir="${config.home.homeDirectory}/.pi/agent"
+    settings_file="$settings_dir/settings.json"
+    run mkdir -p "$settings_dir"
+    if [ -z "''${DRY_RUN_CMD:-}" ]; then
+      (
+        umask 077
+        tmp=$(mktemp "$settings_dir/settings.json.XXXXXX")
+        trap 'rm -f "$tmp"' EXIT
+        if [ -f "$settings_file" ]; then
+          ${pkgs.jq}/bin/jq '. + {tuiMode: "fullscreen"}' "$settings_file" > "$tmp" || exit 1
+        else
+          printf '%s\n' '{"tuiMode":"fullscreen"}' > "$tmp"
+        fi
+        mv "$tmp" "$settings_file"
+      )
+    fi
+  '';
+
   programs.opencode = {
-    enable = true;
+    enable = false;
 
     extraPackages = with pkgs; [
       nil
