@@ -6,11 +6,23 @@
   ...
 }:
 
+let
+  piWithProxy = pkgs.symlinkJoin {
+    name = "pi-with-proxy";
+    paths = [ pkgs.pi-coding-agent ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram "$out/bin/pi" \
+        --set NODE_USE_ENV_PROXY 1 \
+        --set PI_CURSOR_HTTP_1_1 true
+    '';
+  };
+in
 {
   home.packages = with pkgs; [
     claude-code
     codex
-    pi-coding-agent
+    piWithProxy
     openspec
   ];
 
