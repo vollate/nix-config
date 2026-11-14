@@ -9,6 +9,8 @@
     ../../private/msi-intel-12700
   ];
 
+  nixosVollate.monitoring.enable = true;
+
   nixosVollate.graphicsVendor = "intel";
 
   services.sunshine.settings = {

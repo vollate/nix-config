@@ -1,0 +1,1387 @@
+{
+  "id": null,
+  "uid": "mag-access",
+  "title": "@host@ · Traffic",
+  "description": "Caddy access logs via Alloy and Loki. Body bytes are counted when each request completes.",
+  "tags": [
+    "caddy",
+    "loki"
+  ],
+  "timezone": "browser",
+  "editable": false,
+  "graphTooltip": 1,
+  "schemaVersion": 39,
+  "version": 2,
+  "refresh": "1m",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "1m",
+      "5m",
+      "15m",
+      "1h"
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "links": [],
+  "templating": {
+    "list": [
+      {
+        "name": "ip",
+        "label": "Client IP",
+        "type": "textbox",
+        "query": ".*",
+        "current": {
+          "text": ".*",
+          "value": ".*"
+        },
+        "options": [
+          {
+            "text": ".*",
+            "value": ".*",
+            "selected": true
+          }
+        ],
+        "hide": 0,
+        "description": "RE2 regex, e.g. 192\\.0\\.2\\.1 or 2001:db8::.*"
+      },
+      {
+        "name": "method",
+        "label": "Method",
+        "type": "textbox",
+        "query": ".*",
+        "current": {
+          "text": ".*",
+          "value": ".*"
+        },
+        "options": [
+          {
+            "text": ".*",
+            "value": ".*",
+            "selected": true
+          }
+        ],
+        "hide": 0,
+        "description": "RE2 regex, e.g. GET|POST"
+      },
+      {
+        "name": "status",
+        "label": "Status",
+        "type": "textbox",
+        "query": ".*",
+        "current": {
+          "text": ".*",
+          "value": ".*"
+        },
+        "options": [
+          {
+            "text": ".*",
+            "value": ".*",
+            "selected": true
+          }
+        ],
+        "hide": 0,
+        "description": "RE2 regex, e.g. 2.. or [45].."
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Requests",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip [$__range]))",
+          "queryType": "instant",
+          "legendFormat": "",
+          "editorMode": "code"
+        }
+      ],
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "0",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "textMode": "value",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Clients",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "count(sum by (client_ip) (count_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip [$__range])))",
+          "queryType": "instant",
+          "legendFormat": "",
+          "editorMode": "code"
+        }
+      ],
+      "description": "Distinct client IPs in the selected range.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "0",
+          "decimals": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "teal"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "textMode": "value",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Sent",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(sum_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip, sent_bytes | unwrap sent_bytes | __error__=\"\" [$__range]))",
+          "queryType": "instant",
+          "legendFormat": "",
+          "editorMode": "code"
+        }
+      ],
+      "description": "Response body bytes sent to clients.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "noValue": "0",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "textMode": "value",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Received",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(sum_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip, received_bytes | unwrap received_bytes | __error__=\"\" [$__range]))",
+          "queryType": "instant",
+          "legendFormat": "",
+          "editorMode": "code"
+        }
+      ],
+      "description": "Request body bytes read from clients.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "noValue": "0",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "purple"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "textMode": "value",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Error rate",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "(sum(count_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | status=~`[45][0-9]{2}` | keep client_ip [$__range])) or vector(0)) / sum(count_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip [$__range]))",
+          "queryType": "instant",
+          "legendFormat": "",
+          "editorMode": "code"
+        }
+      ],
+      "description": "Share of 4xx and 5xx responses.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "0",
+          "decimals": 1,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.05
+              },
+              {
+                "color": "red",
+                "value": 0.2
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "textMode": "value",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "P95 latency",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "quantile_over_time(0.95, {service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep duration | unwrap duration | __error__=\"\" [$__range]) by ()",
+          "queryType": "instant",
+          "legendFormat": "",
+          "editorMode": "code"
+        }
+      ],
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "noValue": "0",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "textMode": "value",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Traffic",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 16,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(sum_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip, sent_bytes | unwrap sent_bytes | __error__=\"\" [$__interval]))",
+          "queryType": "range",
+          "legendFormat": "Sent",
+          "editorMode": "code"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(sum_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip, received_bytes | unwrap received_bytes | __error__=\"\" [$__interval]))",
+          "queryType": "range",
+          "legendFormat": "Received",
+          "editorMode": "code"
+        }
+      ],
+      "description": "Body bytes per interval: sent above the axis, received below.",
+      "interval": "1m",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "min": null,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "gradientMode": "hue",
+            "lineWidth": 1,
+            "barAlignment": 0,
+            "showPoints": "never",
+            "axisCenteredZero": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sent"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Received"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "purple"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Received"
+            },
+            "properties": [
+              {
+                "id": "custom.transform",
+                "value": "negative-Y"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "sum",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "maxDataPoints": 150
+    },
+    {
+      "id": 8,
+      "type": "piechart",
+      "title": "Status codes",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 4,
+        "w": 8,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (class) (count_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | label_format class=`{{ substr 0 1 .status }}xx` | keep class [$__range]))",
+          "queryType": "instant",
+          "legendFormat": "{{class}}",
+          "editorMode": "code"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "2xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "3xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "4xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "pieType": "donut",
+        "displayLabels": [
+          "percent"
+        ],
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Requests by status",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (class) (count_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | label_format class=`{{ substr 0 1 .status }}xx` | keep class [$__interval]))",
+          "queryType": "range",
+          "legendFormat": "{{class}}",
+          "editorMode": "code"
+        }
+      ],
+      "description": "",
+      "interval": "1m",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": null,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "lineWidth": 1,
+            "barAlignment": 0,
+            "showPoints": "never",
+            "axisCenteredZero": false,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "2xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "3xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "4xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "maxDataPoints": 150
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "Latency",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 13,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "quantile_over_time(0.5, {service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep duration | unwrap duration | __error__=\"\" [$__interval]) by ()",
+          "queryType": "range",
+          "legendFormat": "p50",
+          "editorMode": "code"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "quantile_over_time(0.95, {service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep duration | unwrap duration | __error__=\"\" [$__interval]) by ()",
+          "queryType": "range",
+          "legendFormat": "p95",
+          "editorMode": "code"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "quantile_over_time(0.99, {service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep duration | unwrap duration | __error__=\"\" [$__interval]) by ()",
+          "queryType": "range",
+          "legendFormat": "p99",
+          "editorMode": "code"
+        }
+      ],
+      "description": "Request duration measured by Caddy, including body transfer time.",
+      "interval": "1m",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": null,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p50"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p95"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "yellow"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p99"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "maxDataPoints": 300
+    },
+    {
+      "id": 11,
+      "type": "table",
+      "title": "Clients",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 21,
+        "w": 24,
+        "h": 12
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "label_replace(sum by (client_ip) (count_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip [$__range])), \"metric\", \"Requests\", \"client_ip\", \".+\") or label_replace((sum by (client_ip) (count_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | status=~`[45][0-9]{2}` | keep client_ip [$__range])) or 0 * sum by (client_ip) (count_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip [$__range]))), \"metric\", \"Errors\", \"client_ip\", \".+\") or label_replace(sum by (client_ip) (sum_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip, sent_bytes | unwrap sent_bytes | __error__=\"\" [$__range])), \"metric\", \"Sent\", \"client_ip\", \".+\") or label_replace(sum by (client_ip) (sum_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip, received_bytes | unwrap received_bytes | __error__=\"\" [$__range])), \"metric\", \"Received\", \"client_ip\", \".+\")",
+          "queryType": "instant",
+          "legendFormat": "",
+          "editorMode": "code"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Client IP"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Errors"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "text",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sent"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-blues"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge",
+                  "mode": "gradient",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 320
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Received"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-BlPu"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge",
+                  "mode": "gradient",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 320
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [
+          {
+            "displayName": "Sent",
+            "desc": true
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns",
+            "valueLabel": "metric"
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {
+              "client_ip": 0,
+              "Requests": 1,
+              "Errors": 2,
+              "Sent": 3,
+              "Received": 4
+            },
+            "renameByName": {
+              "client_ip": "Client IP"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "type": "row",
+      "title": "Top clients over time",
+      "collapsed": true,
+      "gridPos": {
+        "x": 0,
+        "y": 33,
+        "w": 24,
+        "h": 1
+      },
+      "panels": [
+        {
+          "id": 12,
+          "type": "timeseries",
+          "title": "Top clients · requests",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 34,
+            "w": 8,
+            "h": 9
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "expr": "topk(10, sum by (client_ip) (count_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip [$__interval])))",
+              "queryType": "range",
+              "legendFormat": "{{client_ip}}",
+              "editorMode": "code"
+            }
+          ],
+          "description": "",
+          "interval": "1m",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "min": null,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "lineWidth": 2,
+                "fillOpacity": 12,
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                }
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true,
+              "calcs": [
+                "sum"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "maxDataPoints": 200
+        },
+        {
+          "id": 13,
+          "type": "timeseries",
+          "title": "Top clients · sent",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "gridPos": {
+            "x": 8,
+            "y": 34,
+            "w": 8,
+            "h": 9
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "expr": "topk(10, sum by (client_ip) (sum_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip, sent_bytes | unwrap sent_bytes | __error__=\"\" [$__interval])))",
+              "queryType": "range",
+              "legendFormat": "{{client_ip}}",
+              "editorMode": "code"
+            }
+          ],
+          "description": "",
+          "interval": "1m",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "min": null,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "lineWidth": 2,
+                "fillOpacity": 12,
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                }
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true,
+              "calcs": [
+                "sum"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "maxDataPoints": 200
+        },
+        {
+          "id": 14,
+          "type": "timeseries",
+          "title": "Top clients · received",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "gridPos": {
+            "x": 16,
+            "y": 34,
+            "w": 8,
+            "h": 9
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "expr": "topk(10, sum by (client_ip) (sum_over_time({service_name=\"mag-access\"} | json | __error__=\"\" | client_ip!=\"\" | client_ip=~`${ip:raw}` | method=~`${method:raw}` | status=~`${status:raw}` | keep client_ip, received_bytes | unwrap received_bytes | __error__=\"\" [$__interval])))",
+              "queryType": "range",
+              "legendFormat": "{{client_ip}}",
+              "editorMode": "code"
+            }
+          ],
+          "description": "",
+          "interval": "1m",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "min": null,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "lineWidth": 2,
+                "fillOpacity": 12,
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                }
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true,
+              "calcs": [
+                "sum"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "maxDataPoints": 200
+        }
+      ]
+    }
+  ]
+}

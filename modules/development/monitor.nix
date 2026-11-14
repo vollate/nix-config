@@ -37,5 +37,6 @@ in
     nvtopPackage
     iotop
     nethogs
+    smartmontools
   ];
 }
