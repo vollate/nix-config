@@ -45,7 +45,7 @@ let
       alert = "TargetDown";
       expr = "up == 0";
       for = "5m";
-      annotations.summary = "{{ $labels.job }} exporter is unreachable";
+      annotations.summary = "{{ $labels.job }} target {{ $labels.instance }} is unreachable";
     }
     {
       alert = "SmartFailing";
@@ -75,9 +75,9 @@ let
     }
     {
       alert = "FilesystemAlmostFull";
-      expr = ''min by (device) (node_filesystem_avail_bytes{fstype=~"btrfs|ext4|xfs|vfat"} / node_filesystem_size_bytes) < 0.10'';
+      expr = ''min by (job, instance, host, device, mountpoint) (node_filesystem_avail_bytes{fstype=~"btrfs|ext4|xfs|vfat"} / node_filesystem_size_bytes) < 0.10'';
       for = "15m";
-      annotations.summary = "{{ $labels.device }} has {{ $value | humanizePercentage }} free";
+      annotations.summary = "{{ $labels.instance }} {{ $labels.mountpoint }} has {{ $value | humanizePercentage }} free";
     }
     {
       alert = "BtrfsDeviceErrors";
@@ -91,7 +91,7 @@ let
     }
     {
       alert = "SystemdUnitFailed";
-      expr = ''node_systemd_unit_state{state="failed"} == 1'';
+      expr = ''node_systemd_unit_state{job="node",state="failed"} == 1'';
       for = "5m";
       annotations.summary = "{{ $labels.name }} has failed";
     }
@@ -100,6 +100,24 @@ let
       expr = "node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.05";
       for = "10m";
       annotations.summary = "Only {{ $value | humanizePercentage }} memory available";
+    }
+    {
+      alert = "OpenWrtTmpAlmostFull";
+      expr = ''node_filesystem_avail_bytes{job="openwrt",mountpoint="/tmp"} / node_filesystem_size_bytes{job="openwrt",mountpoint="/tmp"} < 0.15'';
+      for = "15m";
+      annotations.summary = "{{ $labels.host }} /tmp has {{ $value | humanizePercentage }} free";
+    }
+    {
+      alert = "OpenWrtConntrackHigh";
+      expr = ''node_nf_conntrack_entries{job="openwrt"} / node_nf_conntrack_entries_limit{job="openwrt"} > 0.80'';
+      for = "15m";
+      annotations.summary = "{{ $labels.host }} conntrack table is {{ $value | humanizePercentage }} full";
+    }
+    {
+      alert = "OpenWrtCpuHot";
+      expr = ''node_hwmon_temp_celsius{job="openwrt",chip="platform_coretemp.0"} > 80'';
+      for = "10m";
+      annotations.summary = "{{ $labels.host }} CPU sensor {{ $labels.sensor }} is {{ $value }}°C";
     }
   ];
 in
@@ -246,6 +264,8 @@ in
                 receiver = "telegram";
                 group_by = [
                   "alertname"
+                  "job"
+                  "instance"
                   "device"
                 ];
                 group_wait = "30s";

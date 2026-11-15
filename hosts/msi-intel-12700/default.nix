@@ -5,6 +5,7 @@
   imports = [
     ./hardware-configuration.nix
     ./hardware.nix
+    ./monitoring.nix
     ./networking.nix
     ../../private/msi-intel-12700
   ];
