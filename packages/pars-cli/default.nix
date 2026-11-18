@@ -1,19 +1,21 @@
 {
   lib,
   fetchCrate,
+  gitMinimal,
   rustPlatform,
 }:
 
 rustPlatform.buildRustPackage rec {
   pname = "pars-cli";
-  version = "0.2.0";
+  version = "0.3.0";
 
   src = fetchCrate {
     inherit pname version;
-    hash = "sha256-sxdQJVKbhSKG7AwSl0P2LpS7Ncr41ZYndAHuOmC87So=";
+    hash = "sha256-K7Wzk32CSQHsKihbXn7trsxse+nMDriH2RKz8ll1+A0=";
   };
 
   cargoLock.lockFile = "${src}/Cargo.lock";
+  nativeCheckInputs = [ gitMinimal ];
 
   meta = {
     description = "zx2c4-pass compatible password manager";

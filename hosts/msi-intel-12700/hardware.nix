@@ -12,7 +12,8 @@
     enable = true;
     cpuFreqGovernor = "schedutil";
   };
-  services.thermald.enable = lib.mkDefault true;
+  # Desktop firmware ships no DPTF tables, so thermald's adaptive mode exits at boot.
+  services.thermald.enable = false;
 
   nixpkgs.config.packageOverrides = pkgs: {
     intel-vaapi-driver = pkgs.intel-vaapi-driver.override { enableHybridCodec = true; };

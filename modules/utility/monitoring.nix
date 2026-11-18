@@ -32,6 +32,16 @@ let
       data = json.loads(text)
       data.pop("__inputs", None)
       data["templating"]["list"] = [v for v in data["templating"]["list"] if v.get("type") != "datasource"]
+      if sys.argv[2].endswith("/smartctl.json"):
+          import re
+          # When a kernel device name is reused, only its newest identity is valid
+          # at each evaluation step. Keep the original value (1) and dashboard filters.
+          latest = "topk by (instance, device) (1, timestamp(smartctl_device))"
+          for panel in data["panels"]:
+              for target in panel.get("targets", []):
+                  if "expr" in target:
+                      target["expr"] = re.sub(r"\bsmartctl_device\b(?:\{[^}]*\})?",
+                          lambda m: f"({m[0]} and {latest})", target["expr"])
       with open(sys.argv[2], "w") as out:
           json.dump(data, out)
       PY
@@ -39,8 +49,27 @@ let
   '';
 
   tg = cfg.alerting.telegram;
+  # sdX/nvmeX names can swap across reboots, so SMART counters are tracked per drive serial.
+  # Pre-reboot series stay visible for the 5m lookback, so keep only the newest name/serial pairing.
+  deviceSerial =
+    by: "group by (instance, device, serial_number) (topk by (${by}) (1, timestamp(smartctl_device)))";
+  bySerial =
+    metric:
+    "max without (device) (${metric} * on (instance, device) group_left (serial_number) ${deviceSerial "instance, device"})";
+  withDevice =
+    expr:
+    "(${expr}) * on (instance, serial_number) group_left (device) ${deviceSerial "instance, serial_number"}";
+  growth = series: withDevice "(${series} - min_over_time(${series}[1h])) > 0";
   # SMART counters alert on growth so drives with old, stable bad sectors stay quiet.
   alertRules = [
+    {
+      record = "smartctl:device_attribute_raw:by_serial";
+      expr = bySerial ''smartctl_device_attribute{attribute_value_type="raw", attribute_name=~"Reallocated_Sector_Ct|Current_Pending_Sector|Offline_Uncorrectable|Reported_Uncorrect"}'';
+    }
+    {
+      record = "smartctl:device_media_errors:by_serial";
+      expr = bySerial "smartctl_device_media_errors";
+    }
     {
       alert = "TargetDown";
       expr = "up == 0";
@@ -54,8 +83,8 @@ let
     }
     {
       alert = "SmartSectorsGrowing";
-      expr = ''delta(smartctl_device_attribute{attribute_value_type="raw", attribute_name=~"Reallocated_Sector_Ct|Current_Pending_Sector|Offline_Uncorrectable|Reported_Uncorrect"}[1h]) > 0'';
-      annotations.summary = "{{ $labels.device }} {{ $labels.attribute_name }} increased by {{ $value }}";
+      expr = growth "smartctl:device_attribute_raw:by_serial";
+      annotations.summary = "{{ $labels.device }} ({{ $labels.serial_number }}) {{ $labels.attribute_name }} increased by {{ $value }}";
     }
     {
       alert = "NvmeCriticalWarning";
@@ -64,8 +93,8 @@ let
     }
     {
       alert = "NvmeMediaErrors";
-      expr = "delta(smartctl_device_media_errors[1h]) > 0";
-      annotations.summary = "{{ $labels.device }} logged {{ $value }} new media errors";
+      expr = growth "smartctl:device_media_errors:by_serial";
+      annotations.summary = "{{ $labels.device }} ({{ $labels.serial_number }}) logged {{ $value }} new media errors";
     }
     {
       alert = "DiskHot";
