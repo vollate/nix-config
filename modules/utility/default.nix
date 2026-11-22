@@ -9,5 +9,7 @@
   imports = [
     ./password-manager.nix
     ./rclone.nix
+    ./disk-maintenance.nix
+    ./monitoring.nix
   ];
 }

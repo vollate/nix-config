@@ -70,8 +70,6 @@
       # Import overlays
       overlays = import ./overlays inputs;
 
-      # Import secrets
-      secrets = import ./private/secrets.nix;
     in
     {
       # NixOS configurations
@@ -83,7 +81,6 @@
           desktop = "plasma";
           system = "x86_64-linux";
           overlays = overlays; # Apply overlays
-          specialArgs = { inherit secrets; };
         };
 
         # MSI with Intel i7-12700 and Plasma desktop
@@ -93,7 +90,6 @@
           desktop = "plasma";
           system = "x86_64-linux";
           overlays = overlays;
-          specialArgs = { inherit secrets; };
         };
 
         # Add more hosts here as needed
