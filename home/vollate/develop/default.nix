@@ -13,6 +13,6 @@
     ./jetbrains.nix
     ./pnpm.nix
     ./rustup.nix
-    ./vscode.nix
+    #./vscode.nix
   ];
 }
