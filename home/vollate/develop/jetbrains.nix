@@ -7,11 +7,11 @@
 
 {
   home.packages = with pkgs.jetbrains; [
-    webstorm
-    clion
-    goland
-    pycharm
-    rust-rover
+    #webstorm
+    #clion
+    #goland
+    #pycharm
+    #rust-rover
     datagrip
   ];
 }
