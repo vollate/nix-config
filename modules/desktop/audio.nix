@@ -16,7 +16,6 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    jack.enable = true;
 
     # Use the example session manager (no others are packaged yet)
     # wireplumber is the default session manager since NixOS 22.05
@@ -46,6 +45,7 @@
 
   # Audio packages
   environment.systemPackages = with pkgs; [
+    config.services.pipewire.package.jack # pw-jack wrapper for JACK clients
     pavucontrol
     pulsemixer
     crosspipe # PipeWire graph editor
